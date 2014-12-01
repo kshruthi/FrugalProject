@@ -8,6 +8,7 @@ import javax.swing.JTable;
 /**
  *
  * @author Shruthi
+ * @date 11/25/2014
  */
 public class LoginGUI extends javax.swing.JFrame {
 	//SHRUTHI private JTable jtable1; // the table displayed on the GUI
