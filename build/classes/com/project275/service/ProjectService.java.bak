@@ -1,0 +1,113 @@
+package com.project275.service;
+
+
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import javax.persistence.*;
+
+import com.project275.entity.Project;
+import com.project275.util.PersistenceUtil;
+
+
+public class ProjectService {
+	private static String QUERY_BASED_ON_PROJECT_NAME = "from Project p where p.projName = '";
+	private EntityManager manager;
+	public ProjectService(EntityManager manager){
+		this.manager=manager;
+	}
+	public Project createProject(String projName,String projStatus,String partner,
+			String store,String dateOfDiscuss,String projDesc,String projStartDt,
+			String projEndDt,int projectedCost,int actualCost,String projOutcome){
+		Project proj=new Project();
+		proj.setProjName(projName);
+		proj.setProjStatus(projStatus);
+		proj.setProjPartner(partner);
+		proj.setProjStoreName(store);
+		Date date1;
+		try {
+			date1 = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.ENGLISH).parse(dateOfDiscuss);
+			proj.setProjDateDiscuss(date1);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		proj.setProjDesc(projDesc);
+		Date date2;
+		try {
+			date2 = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.ENGLISH).parse(projStartDt);
+			proj.setProjStartDate(date2);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Date date3;
+		try {
+			date3 = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.ENGLISH).parse(projEndDt);
+			proj.setProjEndDate(date3);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		proj.setProjProjectedCost(projectedCost);
+		proj.setProjActualCost(actualCost);
+		proj.setProjOutcome(projOutcome);
+		manager.persist(proj);
+		return proj;
+	}
+	public Project readCourse(int projectID){
+		Project proj=manager.find(Project.class, projectID);
+		return proj;
+	}
+	public List<Project> readAll(){
+		TypedQuery<Project> query=manager.createQuery("SELECT e FROM project e",Project.class);
+		List<Project> result=query.getResultList();
+		return result;
+	}
+	
+	/*public UserList updateCourse(String userName,int userID,String role,String admin,String isActive,String email,String password){
+		UserList user=manager.find(UserList.class, userID);
+		if(user!=null){
+			user.setUserName(userName);
+			user.setRole(role);
+			user.setAdmin(admin);
+			user.setIsActive(isActive);
+			user.setEmail(email);
+			user.setPassword(password);
+			
+		}
+		//return c
+		 * ourse;
+		return user;
+		
+	}*/
+	
+	/*public void deleteCourse(int userID){
+		UserList user = manager.find(UserList.class, userID);
+		if(user!=null){
+			manager.remove(user);
+		}
+	}*/
+	public static List<Object> getProjectByProjectName(String projectName) {
+		String  queryStr = QUERY_BASED_ON_PROJECT_NAME + projectName +  "'";
+		Query query= PersistenceUtil.getEntityManager().createQuery(queryStr);
+		List<Object> result = query.getResultList();
+		return result;
+	}
+	
+	public static Project getSingleProjectByProjectName(String projectName) {
+		String  queryStr = QUERY_BASED_ON_PROJECT_NAME + projectName +  "'";
+		Query query= PersistenceUtil.getEntityManager().createQuery(queryStr);
+		Project result = null;
+		if(query.getResultList() .size() > 0) {
+		 result = (Project)query.getResultList().get(0);
+		}
+		return result;
+	}
+}
+
